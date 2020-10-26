@@ -42,7 +42,7 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
     }
 
     private void actualDraw(LineDrawer ld) {
-        DrawUtils.drawSnowflake(ld, getWidth()/2, getHeight()/2, 80, 60);
+        DrawUtils.drawSnowflake(ld, getWidth()/2 + 150, getHeight()/2 + 200, 80, 60);
         ld.drawLine(getWidth()/2, getHeight()/2, position.x, position.y);
     }
 

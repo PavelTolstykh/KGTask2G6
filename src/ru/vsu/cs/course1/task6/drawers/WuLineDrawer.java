@@ -15,16 +15,17 @@ public class WuLineDrawer implements LineDrawer {
 
     @Override
     public void drawLine(int x1, int y1, int x2, int y2) {
-        boolean steep = Math.abs(y2 - y1) > Math.abs(x2 - x1);
-        if (steep) {
+        boolean isSwap = false;
+        if (Math.abs(x2 - x1) < Math.abs(y2 - y1)) {
             int tmp = x1;
             x1 = y1;
             y1 = tmp;
             tmp = x2;
             x2 = y2;
             y2 = tmp;
+            isSwap = true;
         }
-        if (x1 > x2) {
+        if (x2 < x1) {
             int tmp = x1;
             x1 = x2;
             x2 = tmp;
@@ -34,44 +35,39 @@ public class WuLineDrawer implements LineDrawer {
         }
         double dx = x2 - x1;
         double dy = y2 - y1;
-        double gradient = dx == 0 ? 1 : dy / dx;
-        int xend = Math.round(x1);
-        double yend = y1 + gradient * (xend - x1);
-        double xgap = 1 - (x1 + 0.5) + Math.floor(x1 + 0.5);
-        int xpxl1 = xend;
-        int ypxl1 = (int)Math.floor(yend);
-        if (steep) {
-            pd.drawPixel(ypxl1, xpxl1, new Color((int)(255 * (1 - yend + Math.floor(yend)) * xgap), (int)(255 * (1 - yend + Math.floor(yend)) * xgap) , (int)(255 * (1 - yend + Math.floor(yend)) * xgap)));
-            pd.drawPixel(ypxl1 + 1, xpxl1, new Color((int)(255 * (yend - Math.floor(yend)) * xgap), (int)(255 * (yend - Math.floor(yend)) * xgap), (int)(255 * (yend - Math.floor(yend)) * xgap)));
-        } else {
-            pd.drawPixel(xpxl1, ypxl1, new Color((int)(255 * (1 - yend + Math.floor(yend)) * xgap), (int)(255 * (1 - yend + Math.floor(yend)) * xgap), (int)(255 * (1 - yend + Math.floor(yend)) * xgap)));
-            pd.drawPixel(xpxl1, ypxl1 + 1, new Color((int)(255 * (yend - Math.floor(yend)) * xgap), (int)(255 * (yend - Math.floor(yend)) * xgap), (int)(255 * (yend - Math.floor(yend)) * xgap)));
-        }
-        double del = yend + gradient;
-        xend = Math.round(x2);
-        yend = y2 + gradient * (xend - x2);
-        xgap = (x1 + 0.5) - Math.floor(x1 + 0.5);
-        int xpxl2 = xend;
-        int ypxl2 = (int)Math.floor(yend);
-        if (steep) {
-            pd.drawPixel(ypxl2, xpxl2, new Color((int)(255 * (1 - yend + Math.floor(yend)) * xgap), (int)(255 * (1 - yend + Math.floor(yend)) * xgap), (int)(255 * (1 - yend + Math.floor(yend)) * xgap)));
-            pd.drawPixel(ypxl2 + 1, xpxl2, new Color((int)(255 * (yend - Math.floor(yend)) * xgap), (int)(255 * (yend - Math.floor(yend)) * xgap), (int)(255 * (yend - Math.floor(yend)) * xgap)));
-        } else {
-            pd.drawPixel(xpxl2, ypxl2, new Color((int)(255 * (1 - yend + Math.floor(yend)) * xgap), (int)(255 * (1 - yend + Math.floor(yend)) * xgap), (int)(255 * (1 - yend + Math.floor(yend)) * xgap)));
-            pd.drawPixel(xpxl2, ypxl2 + 1, new Color((int)(255 * (yend - Math.floor(yend)) * xgap), (int)(255 * (yend - Math.floor(yend)) * xgap), (int)(255 * (yend - Math.floor(yend)) * xgap)));
-        }
-        if (steep) {
-            for (int i = xpxl1 + 1; i <= xpxl2 - 1; i++) {
-                pd.drawPixel((int)Math.floor(del), i, new Color((int)((1 - del + Math.floor(del)) * 255), (int)((1 - del + Math.floor(del)) * 255), (int)((1 - del + Math.floor(del)) * 255)));
-                pd.drawPixel((int)Math.floor(del) + 1, i, new Color((int)((del - Math.floor(del)) * 255), (int)((del - Math.floor(del)) * 255), (int)((del - Math.floor(del)) * 255)));
-                del += gradient;
+        if (dx == 0) {
+            if (x1 == x2) {
+                for (int y = y1; y < y2; y++) {
+                    pd.drawPixel(x1, y, Color.BLACK);
+                }
+            } else {
+                for (int x = x1; x < x2; x++) {
+                    pd.drawPixel(x, y1, Color.BLACK);
+                }
             }
+            return;
+        }
+        if (isSwap) {
+            pd.drawPixel(y1, x1, Color.BLACK);
         } else {
-            for (int i = xpxl1 + 1; i <= xpxl2 - 1; i++) {
-                pd.drawPixel(i, (int)Math.floor(del), new Color((int)((1 - del + Math.floor(del)) * 255), (int)((1 - del + Math.floor(del)) * 255), (int)((1 - del + Math.floor(del)) * 255)));
-                pd.drawPixel(i, (int)Math.floor(del) + 1, new Color((int)((del - Math.floor(del)) * 255), (int)((del - Math.floor(del)) * 255), (int)((del - Math.floor(del)) * 255)));
-                del += gradient;
+            pd.drawPixel(x1, y1, Color.BLACK);
+        }
+        double gradient = dy / dx;
+        double del = y1 + gradient;
+        for (int i = x1 + 1; i < x2; i++) {
+            if (isSwap) {
+                pd.drawPixel((int) del, i, new Color(0, 0, 0, (int) (255 * (1 - del + (int) del))));
+                pd.drawPixel((int) del + 1, i, new Color(0, 0, 0, (int) (255 * (del - (int) del))));
+            } else {
+                pd.drawPixel(i, (int) del, new Color(0, 0, 0, (int) (255 * (1 - del + (int) del))));
+                pd.drawPixel(i, (int) del + 1, new Color(0, 0, 0, (int) (255 * (del - (int) del))));
             }
+            del += gradient;
+        }
+        if (isSwap) {
+            pd.drawPixel(y2, x2, Color.BLACK);
+        } else {
+            pd.drawPixel(x2, y2, Color.BLACK);
         }
     }
 }

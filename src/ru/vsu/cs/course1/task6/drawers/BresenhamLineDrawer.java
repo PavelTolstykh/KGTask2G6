@@ -14,9 +14,8 @@ public class BresenhamLineDrawer implements LineDrawer {
 
     @Override
     public void drawLine(int x1, int y1, int x2, int y2) {
-        double dy, dx;
-        dy = y2 - y1;
-        dx = x1 - x2;
+        double dy = y2 - y1;
+        double dx = x1 - x2;
         int f = 0;
         pd.drawPixel(x1, y1, Color.RED);
         int x = x1, y = y1;

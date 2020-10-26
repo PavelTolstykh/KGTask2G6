@@ -14,32 +14,39 @@ public class BresenhamLineDrawer implements LineDrawer {
 
     @Override
     public void drawLine(int x1, int y1, int x2, int y2) {
-        double dy, dx;
-        dy = y2 - y1;
-        dx = x1 - x2;
-        int f = 0;
-        pd.drawPixel(x1, y1, Color.RED);
-        int x = x1, y = y1;
-        if (Math.abs(dy) <= Math.abs(dx)) {
-            do {
-                f += dy < 0 ? dy*(-1) : dy;
-                if (f > 0) {
-                    f -= dx < 0 ? dx*(-1) : dx;
-                    y += dy < 0 ? -1 : 1;
+        double dy = Math.abs(y2 - y1);
+        double dx = Math.abs(x2 - x1);
+        int x, y;
+        if (Math.abs(dy) > Math.abs(dx)) {
+            double shift = dx + 1;
+            double sum = 0;
+            if (y1 > y2) {
+                x1 = x1 ^ x2 ^ (x2 = x1);
+                y1 = y1 ^ y2 ^ (y2 = y1);
+            }
+            for (x = x1, y = y1; y <= y2; y++) {
+                pd.drawPixel(x, y, Color.BLACK);
+                sum += shift;
+                if (sum >= dy + 1) {
+                    sum -= dy + 1;
+                    x += x2 > x1 ? 1 : -1;
                 }
-                x -= dx < 0 ? -1 : 1;
-                pd.drawPixel(x, y, Color.RED);
-            } while (x != x2 || y != y2);
+            }
         } else {
-            do {
-                f += dx < 0 ? dx*(-1) : dx;
-                if (f > 0) {
-                    f -= dy < 0 ? dy*(-1) : dy;
-                    x -= dx < 0 ? -1 : 1;
+            double shift = dy + 1;
+            double sum = 0;
+            if (x1 > x2) {
+                x1 = x1 + x2 + (x2 = x1);
+                y1 = y1 + y2 + (y2 = y1);
+            }
+            for (x = x1, y = y1; x <= x2; x++) {
+                pd.drawPixel(x, y, Color.BLACK);
+                sum += shift;
+                if (sum >= dx + 1) {
+                    sum -= dx + 1;
+                    y += y2 > y1 ? 1 : -1;
                 }
-                y += dy < 0 ? -1 : 1;
-                pd.drawPixel(x, y, Color.BLUE);
-            } while (x != x2 || y != y2);
+            }
         }
     }
 }

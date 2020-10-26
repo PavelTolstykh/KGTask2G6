@@ -36,8 +36,8 @@ public class BresenhamLineDrawer implements LineDrawer {
             double shift = dy + 1;
             double sum = 0;
             if (x1 > x2) {
-                x1 = x1 + x2 + (x2 = x1);
-                y1 = y1 + y2 + (y2 = y1);
+                x1 = x1 ^ x2 ^ (x2 = x1);
+                y1 = y1 ^ y2 ^ (y2 = y1);
             }
             for (x = x1, y = y1; x <= x2; x++) {
                 pd.drawPixel(x, y, Color.BLACK);

@@ -9,6 +9,10 @@ public class GraphicsPixelDrawer implements PixelDrawer {
         this.g = g;
     }
 
+    public Graphics getG() {
+        return g;
+    }
+
     @Override
     public void drawPixel(int x, int y, Color c) {
         g.setColor(c);
